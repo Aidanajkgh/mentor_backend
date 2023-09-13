@@ -3,20 +3,20 @@ from rest_framework import serializers
 from .models import Announcement, Category, Subcategory
 
 
-class AnnouncementListSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Announcement
-        fields = ['id', 'title', 'description']
+# class AnnouncementListSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = Announcement
+#         fields = ['id', 'title', 'description']
 
-class AnnouncementCreateSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Announcement
-        fields = ['title', 'description']
+# class AnnouncementCreateSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = Announcement
+#         fields = ['title', 'description']
 
-class AnnouncementRetrieveSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Announcement
-        fields = '__all__'
+# class AnnouncementRetrieveSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = Announcement
+#         fields = '__all__'
 
 
 
@@ -31,7 +31,7 @@ class SubcategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AnnouncementSerializers(serializers.ModelSerializer):
+class AnnouncementDetailSerializers(serializers.ModelSerializer):
     subcategory = serializers.SlugRelatedField(slug_field='title', read_only=True)
     discount = serializers.SerializerMethodField()
 
@@ -39,6 +39,12 @@ class AnnouncementSerializers(serializers.ModelSerializer):
         discount_of_price = float(obj.price) * 0.1
         return discount_of_price
 
+    class Meta:
+        model = Announcement
+        fields = '__all__'
+
+
+class AnnouncementSerializers(serializers.ModelSerializer):
     class Meta:
         model = Announcement
         fields = '__all__'

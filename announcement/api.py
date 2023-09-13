@@ -1,16 +1,22 @@
 #from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
 #from rest_framework.generics import RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 #from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAdminUser ,IsAuthenticatedOrReadOnly
+from rest_framework.filters import SearchFilter
+
+from users.permissions import IsOwnerOrReadOnly
+from .pagination import AnnounccementPagination
 
 from .models import Announcement, Subcategory, Category
 from .serializers import (
-        AnnouncementSerializers,
-        SubcategorySerializer,
-        CategorySerializer,
-#     AnnouncementListSerializers, 
-#     AnnouncementCreateSerializers,
-#     AnnouncementRetrieveSerializers,
+    AnnouncementDetailSerializers,
+#    AnnouncementListSerializers, 
+#    AnnouncementCreateSerializers,
+#    AnnouncementRetrieveSerializers,
+    AnnouncementSerializers,
+    SubcategorySerializer,
+    CategorySerializer,
 )
 
 
@@ -20,13 +26,23 @@ class CategoryViewSet(ModelViewSet):
 
 class SubcategoryViewSet(ModelViewSet):
     queryset = Subcategory.objects.all()
+    permission_classes = [IsAdminUser]
     serializer_class = SubcategorySerializer
-
 
 
 class AnnouncementViewSet(ModelViewSet):
     queryset = Announcement.objects.all()
+    permission_classes = [IsOwnerOrReadOnly]
+    pagination_class = AnnounccementPagination
     serializer_class = AnnouncementSerializers
+    filter_backends = [SearchFilter]
+    search_fields = ['title', 'description']
+
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return AnnouncementDetailSerializers
+        else:
+            return AnnouncementSerializers
 
 # class MentorView(APIView):
 #     def get(self, request, *args, **kwargs):
